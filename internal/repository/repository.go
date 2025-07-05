@@ -9,6 +9,7 @@ import (
 type RepositoryI interface {
 	SaveRefreshToken(ctx context.Context, token models.RefreshToken) error
 	FindRefreshToken(ctx context.Context, userID string) (models.RefreshToken, error)
+	FindRefreshTokenByPairID(ctx context.Context, userID, pairID string) (models.RefreshToken, error)
 	RevokeRefreshToken(ctx context.Context, userID string) error
 }
 

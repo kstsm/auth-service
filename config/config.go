@@ -8,6 +8,7 @@ type Config struct {
 	Server   Server
 	Postgres Postgres
 	JWT      JWT
+	Webhook  Webhook
 }
 
 type Server struct {
@@ -26,6 +27,10 @@ type Postgres struct {
 
 type JWT struct {
 	Secret string
+}
+
+type Webhook struct {
+	URL string
 }
 
 func GetConfig() Config {
@@ -51,6 +56,9 @@ func GetConfig() Config {
 		},
 		JWT: JWT{
 			Secret: viper.GetString("SECRET_KEY"),
+		},
+		Webhook: Webhook{
+			URL: viper.GetString("WEBHOOK_URL"),
 		},
 	}
 }

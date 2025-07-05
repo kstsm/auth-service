@@ -10,7 +10,8 @@ import (
 	"time"
 )
 
-func GenerateRefreshToken() (string, string, error) {
+// TODO Разбить функции на две, сделать клэйм для пары
+func GenerateRefreshTokenAndHash() (string, string, error) {
 	b := make([]byte, 64)
 	_, err := rand.Read(b)
 	if err != nil {
@@ -27,11 +28,13 @@ func GenerateRefreshToken() (string, string, error) {
 	return string(hash), token, nil
 }
 
-func GenerateAccessToken(userID, userIP string) (string, error) {
+func GenerateAccessToken(userID, userIP, userAgent, tokenPairID string) (string, error) {
 	claims := jwt.MapClaims{
-		"user_id": userID,
-		"user_ip": userIP,
-		"exp":     time.Now().Add(15 * time.Minute).Unix(),
+		"user_id":       userID,
+		"user_ip":       userIP,
+		"user_agent":    userAgent,
+		"token_pair_id": tokenPairID,
+		"exp":           time.Now().Add(15 * time.Minute).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
@@ -49,10 +52,10 @@ func GenerateAccessToken(userID, userIP string) (string, error) {
 	return tokenString, nil
 }
 
-func ParseAndValidateAccessToken(tokenString string) (string, error) {
+func ParseAndValidateToken(tokenString string) (jwt.MapClaims, error) {
 	secretKey := config.GetConfig().JWT.Secret
 	if secretKey == "" {
-		return "", fmt.Errorf("jwt secret key is not configured")
+		return nil, fmt.Errorf("jwt secret key is not configured")
 	}
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -62,16 +65,25 @@ func ParseAndValidateAccessToken(tokenString string) (string, error) {
 		return []byte(secretKey), nil
 	})
 	if err != nil {
-		return "", fmt.Errorf("failed to parse jwt token: %w", err)
+		return nil, fmt.Errorf("failed to parse jwt token: %w", err)
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		userID, ok := claims["user_id"].(string)
-		if !ok {
-			return "", fmt.Errorf("user_id is missing in token claims")
-		}
-		return userID, nil
+		return claims, nil
 	}
 
-	return "", fmt.Errorf("invalid jwt token")
+	return nil, fmt.Errorf("invalid jwt token")
+}
+
+func GetUserIDFromToken(tokenString string) (string, error) {
+	claims, err := ParseAndValidateToken(tokenString)
+	if err != nil {
+		return "", err
+	}
+
+	userID, ok := claims["user_id"].(string)
+	if !ok {
+		return "", fmt.Errorf("user_id is missing in token claims")
+	}
+	return userID, nil
 }

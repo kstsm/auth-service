@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-type TokenResp struct {
+type GetTokensResponse struct {
 	Access  string `json:"access"`
 	Refresh string `json:"refresh"`
 }
@@ -12,21 +12,18 @@ type Error struct {
 }
 
 type RefreshToken struct {
-	ID        int
-	UserID    string
-	TokenHash string
-	UserAgent string
-	IP        string
-	Revoked   bool
-	CreatedAt time.Time
+	ID          int
+	UserID      string
+	TokenHash   string
+	TokenPairID string
+	UserAgent   string
+	IP          string
+	Revoked     bool
+	CreatedAt   time.Time
 }
 
 type RefreshRequest struct {
 	UserID  string `json:"user_id"`
 	Access  string `json:"access"`
 	Refresh string `json:"refresh"`
-}
-
-type UserIDResponse struct {
-	UserID string `json:"user_id"`
 }

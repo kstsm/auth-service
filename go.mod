@@ -1,4 +1,4 @@
-module github.com/kstsm/auth-service
+module auth-service
 
 go 1.24
 
