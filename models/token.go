@@ -7,8 +7,10 @@ type GetTokensResponse struct {
 	Refresh string `json:"refresh"`
 }
 
-type Error struct {
-	Message string `json:"message"`
+type RefreshRequest struct {
+	UserID  string `json:"user_id"`
+	Access  string `json:"access"`
+	Refresh string `json:"refresh"`
 }
 
 type RefreshToken struct {
@@ -20,10 +22,4 @@ type RefreshToken struct {
 	IP          string
 	Revoked     bool
 	CreatedAt   time.Time
-}
-
-type RefreshRequest struct {
-	UserID  string `json:"user_id"`
-	Access  string `json:"access"`
-	Refresh string `json:"refresh"`
 }

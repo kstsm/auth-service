@@ -3,6 +3,7 @@ package utils
 import (
 	"auth-service/models"
 	"encoding/json"
+	"net"
 	"net/http"
 	"strings"
 )
@@ -31,5 +32,11 @@ func GetIP(r *http.Request) string {
 		parts := strings.Split(forwarded, ",")
 		return strings.TrimSpace(parts[0])
 	}
-	return r.RemoteAddr
+
+	ip, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		return r.RemoteAddr
+	}
+
+	return ip
 }

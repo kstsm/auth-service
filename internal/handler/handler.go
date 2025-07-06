@@ -29,7 +29,7 @@ func (h Handler) NewRouter() http.Handler {
 	r.Post("/token/refresh", h.refreshTokensHandler)
 
 	r.Route("/", func(r chi.Router) {
-		r.Use(middleware.AuthMiddleware(h.service))
+		r.Use(middleware.AuthMiddleware())
 
 		r.Get("/me", h.meHandler)
 		r.Post("/logout", h.logoutHandler)

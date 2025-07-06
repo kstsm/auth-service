@@ -7,10 +7,9 @@ import (
 )
 
 type ServiceI interface {
-	GetTokens(ctx context.Context, userID, ip, userAgent string) (models.GetTokensResponse, error)
-	RefreshTokens(ctx context.Context, userID, access, refresh, ip, userAgent string) (models.GetTokensResponse, error)
-	Logout(ctx context.Context, userID string) error
-	IsUserAuthorized(ctx context.Context, userID string) (bool, error)
+	GenerateTokens(ctx context.Context, userID, ip, userAgent string) (models.GetTokensResponse, error)
+	RefreshTokens(ctx context.Context, userID, access, refresh, userAgent, ip string) (models.GetTokensResponse, error)
+	Logout(ctx context.Context, userID, accessToken string) error
 }
 
 type Service struct {

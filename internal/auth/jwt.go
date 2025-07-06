@@ -6,26 +6,28 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
-// TODO Разбить функции на две, сделать клэйм для пары
-func GenerateRefreshTokenAndHash() (string, string, error) {
-	b := make([]byte, 64)
-	_, err := rand.Read(b)
+func GenerateRefreshToken() (string, string, string, error) {
+	tokenID := uuid.New().String()
+
+	tokenBytes := make([]byte, 32)
+	_, err := rand.Read(tokenBytes)
 	if err != nil {
-		return "", "", fmt.Errorf("generate random bytes: %w", err)
+		return "", "", "", err
 	}
 
-	hash, err := bcrypt.GenerateFromPassword(b, bcrypt.DefaultCost)
+	tokenBase64 := base64.URLEncoding.EncodeToString(tokenBytes)
+
+	hash, err := bcrypt.GenerateFromPassword(tokenBytes, bcrypt.DefaultCost)
 	if err != nil {
-		return "", "", fmt.Errorf("bcrypt hash: %w", err)
+		return "", "", "", err
 	}
 
-	token := base64.URLEncoding.EncodeToString(b)
-
-	return string(hash), token, nil
+	return tokenBase64, string(hash), tokenID, nil
 }
 
 func GenerateAccessToken(userID, userIP, userAgent, tokenPairID string) (string, error) {

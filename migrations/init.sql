@@ -6,6 +6,6 @@ CREATE TABLE refresh_tokens (
     user_agent TEXT NOT NULL,
     ip TEXT NOT NULL,
     revoked BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
