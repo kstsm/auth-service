@@ -1,8 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
-type GetTokensResponse struct {
+type TokensResponse struct {
 	Access  string `json:"access"`
 	Refresh string `json:"refresh"`
 }

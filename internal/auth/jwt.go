@@ -6,28 +6,25 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
-func GenerateRefreshToken() (string, string, string, error) {
-	tokenID := uuid.New().String()
-
+func GenerateRefreshToken() (string, string, error) {
 	tokenBytes := make([]byte, 32)
 	_, err := rand.Read(tokenBytes)
 	if err != nil {
-		return "", "", "", err
+		return "", "", fmt.Errorf("failed to generate random bytes for refresh token: %w", err)
 	}
 
 	tokenBase64 := base64.URLEncoding.EncodeToString(tokenBytes)
 
 	hash, err := bcrypt.GenerateFromPassword(tokenBytes, bcrypt.DefaultCost)
 	if err != nil {
-		return "", "", "", err
+		return "", "", fmt.Errorf("failed to hash refresh token bytes: %w", err)
 	}
 
-	return tokenBase64, string(hash), tokenID, nil
+	return tokenBase64, string(hash), nil
 }
 
 func GenerateAccessToken(userID, userIP, userAgent, tokenPairID string) (string, error) {

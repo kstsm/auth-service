@@ -9,7 +9,10 @@ import (
 
 type HandlerI interface {
 	NewRouter() http.Handler
-	getTokensHandler(w http.ResponseWriter, r *http.Request)
+	generateTokensHandler(w http.ResponseWriter, r *http.Request)
+	refreshTokensHandler(w http.ResponseWriter, r *http.Request)
+	meHandler(w http.ResponseWriter, r *http.Request)
+	logoutHandler(w http.ResponseWriter, r *http.Request)
 }
 
 type Handler struct {
@@ -25,7 +28,7 @@ func NewHandler(service service.ServiceI) HandlerI {
 func (h Handler) NewRouter() http.Handler {
 	r := chi.NewRouter()
 
-	r.Post("/token", h.getTokensHandler)
+	r.Post("/token", h.generateTokensHandler)
 	r.Post("/token/refresh", h.refreshTokensHandler)
 
 	r.Route("/", func(r chi.Router) {

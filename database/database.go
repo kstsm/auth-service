@@ -29,14 +29,16 @@ func InitPostgres(ctx context.Context) *pgxpool.Pool {
 
 	pool, err := pgxpool.New(ctx, dsn)
 	if err != nil {
-		slog.Fatalf("Failed to connect to the database: %v", err)
+		slog.Error("Failed to connect to the database", "error", err)
+		panic(err)
 	}
 
 	slog.Info("Successfully connected to the database")
 
 	err = pool.Ping(ctx)
 	if err != nil {
-		slog.Fatalf("Database connection check failed: %v", err)
+		slog.Error("Database connection check failed", "error", err)
+		panic(err)
 	}
 
 	return pool
