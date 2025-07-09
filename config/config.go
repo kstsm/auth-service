@@ -35,7 +35,6 @@ type Webhook struct {
 
 func GetConfig() Config {
 	viper.SetConfigFile(".env")
-	viper.AutomaticEnv()
 
 	err := viper.ReadInConfig()
 	if err != nil {

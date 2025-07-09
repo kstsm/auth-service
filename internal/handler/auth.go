@@ -11,6 +11,20 @@ import (
 	"strings"
 )
 
+// generateTokensHandler godoc
+// @Summary Генерация access и refresh токенов
+// @Description Генерирует пару токенов для пользователя
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param user_id query string true "ID пользователя"
+// @Success 200 {object} models.TokensResponse "Успешный ответ"
+// @Failure 400 {object} models.Error "Некорректный запрос"
+// @Failure 500 {object} models.Error "Внутренняя ошибка сервера"
+// @Router /token [post]
+// @Example request {"user_id": "b3b3b3b3-b3b3-b3b3-b3b3-b3b3b3b3b3b3"}
+// @Example success {"access": "eyJhbGciOiJIUzI1NiIsInR5cCI6...", "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6..."}
+// @Example error {"message": "user_id обязателен"}
 func (h Handler) generateTokensHandler(w http.ResponseWriter, r *http.Request) {
 	userID := r.URL.Query().Get("user_id")
 	if userID == "" {
@@ -35,6 +49,21 @@ func (h Handler) generateTokensHandler(w http.ResponseWriter, r *http.Request) {
 	utils.SendJSON(w, http.StatusOK, resp)
 }
 
+// refreshTokensHandler godoc
+// @Summary Обновление access и refresh токенов
+// @Description Обновляет пару токенов по refresh токену
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param data body models.RefreshRequest true "Данные для обновления токенов"
+// @Success 200 {object} models.TokensResponse "Успешный ответ"
+// @Failure 400 {object} models.Error "Некорректный запрос"
+// @Failure 401 {object} models.Error "Ошибка авторизации"
+// @Failure 500 {object} models.Error "Внутренняя ошибка сервера"
+// @Router /token/refresh [post]
+// @Example request {"user_id": "b3b3b3b3-b3b3-b3b3-b3b3-b3b3b3b3b3b3", "access": "...", "refresh": "..."}
+// @Example success {"access": "eyJhbGciOiJIUzI1NiIsInR5cCI6...", "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6..."}
+// @Example error {"message": "недействительный токен"}
 func (h Handler) refreshTokensHandler(w http.ResponseWriter, r *http.Request) {
 	var req models.RefreshRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -79,6 +108,19 @@ func (h Handler) refreshTokensHandler(w http.ResponseWriter, r *http.Request) {
 	utils.SendJSON(w, http.StatusOK, resp)
 }
 
+// meHandler godoc
+// @Summary Получить информацию о пользователе
+// @Description Возвращает user_id авторизованного пользователя
+// @Tags user
+// @Accept json
+// @Produce json
+// @Success 200 {object} map[string]string "Успешный ответ"
+// @Failure 401 {object} models.Error "Ошибка авторизации"
+// @Failure 500 {object} models.Error "Внутренняя ошибка сервера"
+// @Router /me [get]
+// @Security BearerAuth
+// @Example success {"user_id": "b3b3b3b3-b3b3-b3b3-b3b3-b3b3b3b3b3b3"}
+// @Example error {"message": "пользователь не авторизован"}
 func (h Handler) meHandler(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value("user_id").(string)
 	if !ok || userID == "" {
@@ -117,6 +159,18 @@ func (h Handler) meHandler(w http.ResponseWriter, r *http.Request) {
 	utils.SendJSON(w, http.StatusOK, map[string]string{"user_id": userID})
 }
 
+// logoutHandler godoc
+// @Summary Деавторизация пользователя
+// @Description Деавторизует пользователя и отзывает токены
+// @Tags user
+// @Accept json
+// @Produce json
+// @Success 200 {object} nil "Успешный ответ"
+// @Failure 401 {object} models.Error "Ошибка авторизации"
+// @Failure 500 {object} models.Error "Внутренняя ошибка сервера"
+// @Router /logout [post]
+// @Security BearerAuth
+// @Example error {"message": "пользователь уже деавторизован"}
 func (h Handler) logoutHandler(w http.ResponseWriter, r *http.Request) {
 	userID, _ := r.Context().Value("user_id").(string)
 
