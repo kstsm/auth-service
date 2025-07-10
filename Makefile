@@ -1,5 +1,11 @@
-build:
-	docker build --tag 'auth-service' .
+up:
+	docker-compose up -d
+
+down:
+	docker-compose down
+
+swagger:
+	swag init -g main.go
 
 run:
-	docker run 'auth-service'
+	swag init -g main.go && go run main.go

@@ -28,7 +28,7 @@ func SendJSON(w http.ResponseWriter, statusCode int, data interface{}) {
 func WriteError(w http.ResponseWriter, statusCode int, message string) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
-	json.NewEncoder(w).Encode(models.Error{Message: message})
+	json.NewEncoder(w).Encode(models.Error{Error: message})
 }
 
 func GetIP(r *http.Request) string {

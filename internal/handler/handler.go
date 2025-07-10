@@ -4,15 +4,12 @@ import (
 	"auth-service/internal/middleware"
 	"auth-service/internal/service"
 	"github.com/go-chi/chi/v5"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"net/http"
 )
 
 type HandlerI interface {
 	NewRouter() http.Handler
-	generateTokensHandler(w http.ResponseWriter, r *http.Request)
-	refreshTokensHandler(w http.ResponseWriter, r *http.Request)
-	meHandler(w http.ResponseWriter, r *http.Request)
-	logoutHandler(w http.ResponseWriter, r *http.Request)
 }
 
 type Handler struct {
@@ -28,6 +25,8 @@ func NewHandler(service service.ServiceI) HandlerI {
 func (h Handler) NewRouter() http.Handler {
 	r := chi.NewRouter()
 
+	r.Get("/swagger/*", h.swaggerHandler())
+
 	r.Post("/token", h.generateTokensHandler)
 	r.Post("/token/refresh", h.refreshTokensHandler)
 
@@ -39,4 +38,10 @@ func (h Handler) NewRouter() http.Handler {
 	})
 
 	return r
+}
+
+func (h Handler) swaggerHandler() http.HandlerFunc {
+	return httpSwagger.Handler(
+		httpSwagger.URL("/swagger/doc.json"),
+	)
 }
