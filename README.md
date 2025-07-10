@@ -15,11 +15,15 @@ git clone https://github.com/kstsm/auth-service
 docker-compose -f docker-compose.yml up -d
 ```
 
-### Доступные endpoints
+## Доступные эндпоинты
 
-- `GET /swagger/` - интерфейс Swagger UI
-- `GET /swagger/doc.json` - Swagger-документация в формате JSON
-- `POST /token` - генерация токенов (требуется параметр GUID пользователя)
-- `POST /token/refresh` - обновление токенов (требуются refresh token, access token и GUID пользователя)
-- `GET /me` -  получение информации о пользователе (требуется авторизация)
-- `POST /logout` - деавторизация пользователя (требуется авторизация)
+- `GET /swagger/` — интерфейс Swagger UI  
+- `GET /swagger/doc.json` — Swagger-документация в формате JSON  
+- `POST /token` — генерация токенов (требуется параметр GUID пользователя)  
+  - **Пример запроса:**
+    ```
+    POST http://localhost:8080/token?user_id=123e4567-e89b-12d3-a456-426614174993
+    ```
+- `POST /token/refresh` — обновление токенов (требуются refresh token, access token и GUID пользователя)  
+- `GET /me` — получение информации о пользователе (требуется авторизация)  
+- `POST /logout` — деавторизация пользователя (требуется авторизация)
